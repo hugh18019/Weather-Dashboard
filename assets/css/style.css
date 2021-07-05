@@ -1,0 +1,45 @@
+html,
+body {
+  margin: 0;
+}
+
+header {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: white;
+  background-color: black;
+  width: 100%;
+  text-align: center;
+}
+
+/* Style the search field */
+/* form.example input[type='text'] {
+  padding: 10px;
+  font-size: 17px;
+  border: 1px solid grey;
+  float: left;
+  width: 80%;
+  background: #f1f1f1;
+} */
+
+/* Style the submit button */
+/* form.example button {
+  float: left;
+  width: 20%;
+  padding: 10px;
+  background: #2196f3;
+  color: white;
+  font-size: 17px;
+  border: 1px solid grey; */
+/* border-left: none; Prevent double borders */
+/* cursor: pointer;
+} */
+
+.inputField {
+  display: inline-block;
+}
+
+.submitBtn {
+  display: inline-block;
+  float: right;
+}
