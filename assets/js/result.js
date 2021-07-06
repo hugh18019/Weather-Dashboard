@@ -5,6 +5,13 @@ var tempEl = $( '#temperature' );
 var humidityEl = $( '#humidity' );
 var windSpeedEl = $( '#wind-speed' );
 var uviEl = $( '#uvi' );
+var cloudsEl = $( '#clouds' );
+var day1El = $( '.day1' );
+var day2El = $( '.day2' );
+var day3El = $( '.day3' );
+var day4El = $( '.day4' );
+var day5El = $( '.day5' );
+
 
 var pastSearchesListEl = $( '.list-group' );
 
@@ -24,28 +31,54 @@ function init() {
 }
 
 var key = localStorage.getItem( "currentSearchCity" );
-writeWeather( key );
+displayWeather( key );
 
 // Outputs the weather data of the current search
 // Add add the current search to the list of search history
-function writeWeather( key ) {
+function displayWeather( key ) {
     
     var weatherDataObj = JSON.parse( localStorage.getItem( key + "_weatherData" ) );
-    cityDateEl.text( weatherDataObj.city );
+    if( weatherDataObj ) {
+        cityDateEl.text( weatherDataObj.city );
+        if( weatherDataObj.clouds.includes( 'cloud' ) ){
+            var cloudsIcon = $( '<i>' );
+            cloudsIcon.addClass( "bi bi-cloud" );
+            cloudsEl.append( cloudsIcon );
+        }
+        tempEl.text( "Temperature: " + weatherDataObj.temperature );
+        humidityEl.text( "Humidity: " + weatherDataObj.humidity );
+        windSpeedEl.text( "Wind Speed: " + weatherDataObj.wind_speed );
+        uviEl.text( "UV Index: " + weatherDataObj.uv_index );
 
-    tempEl.text( "Temperature: " + weatherDataObj.temperature );
-
-    humidityEl.text( "Humidity: " + weatherDataObj.humidity );
-    windSpeedEl.text( "Wind Speed: " + weatherDataObj.wind_speed );
-    uviEl.text( "UV Index: " + weatherDataObj.uv_index );
-
+        display5DayForecast( weatherDataObj );
+    }
+    
     var pastSearches = JSON.parse( localStorage.getItem( "pastSearches" ) );
     if( pastSearches.length === 0 || !pastSearches.includes( key ) ) {
 
         addToSearchHistory( key );
-    }
-    
+    } 
 }
+
+
+function display5DayForecast( weatherDataObj ) {
+    $(day1El).children().eq(1).text( "Temp: " + weatherDataObj.day1.temp.day );
+    $(day1El).children().eq(2).text( "Humidity: " + weatherDataObj.day1.humidity );
+
+    $(day2El).children().eq(1).text( "Temp: " + weatherDataObj.day2.temp.day );
+    $(day2El).children().eq(2).text( "Humidity: " + weatherDataObj.day2.humidity );
+
+    $(day3El).children().eq(1).text( "Temp: " + weatherDataObj.day3.temp.day );
+    $(day3El).children().eq(2).text( "Humidity: " + weatherDataObj.day3.humidity );
+
+    $(day4El).children().eq(1).text( "Temp: " + weatherDataObj.day4.temp.day );
+    $(day4El).children().eq(2).text( "Humidity: " + weatherDataObj.day4.humidity );
+
+    $(day5El).children().eq(1).text( "Temp: " + weatherDataObj.day5.temp.day );
+    $(day5El).children().eq(2).text( "Humidity: " + weatherDataObj.day5.humidity );
+}
+
+
 
 // Add the current search to the array of past searches and stores the array
 // in local storage
@@ -70,14 +103,14 @@ function displaySearchHistory( currentCity ) {
 }
 
 
-function displayWeatherData( event ) {
+function handleHistoryClick( event ) {
     var btnClicked = $( event.target ) ;
     var cityClicked = btnClicked.text();
-    writeWeather( cityClicked );
+    displayWeather( cityClicked );
 }
 
 
-pastSearchesListEl.on( 'click', '.show-data-btn', displayWeatherData );
+pastSearchesListEl.on( 'click', '.show-data-btn', handleHistoryClick );
 
 
 
@@ -85,6 +118,7 @@ pastSearchesListEl.on( 'click', '.show-data-btn', displayWeatherData );
 
 
 //////////////////////////////// From script.js ////////////////////////////////
+///////////////// Haven't found a way to reuse code from another js file ////////////
 
 var cityFormEl = $( '#city-form' );
 var inputEl = $( '#city-name' );
@@ -135,7 +169,7 @@ function getLatLon( lat, lon ) {
 
 // Makes an API call using the correct latitude and longitude to retrieve more complete data including UV index
 function getWeather( ) {
-    var requestUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude + "&lon=" + longitude + "&exclude=hourly,daily&appid=57c122dd425f67042e057496d307055a";
+    var requestUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude + "&lon=" + longitude + "&exclude=minutely,hourly&appid=57c122dd425f67042e057496d307055a";
     fetch( requestUrl )
         .then( function ( response ) {
             return response.json();
@@ -158,12 +192,18 @@ function storeData( data ) {
         temperature : data.current.temp,
         humidity : data.current.humidity,
         wind_speed : data.current.wind_speed,
-        uv_index : data.current.uvi
+        uv_index : data.current.uvi,
+        clouds : data.current.weather[0].main,
+        day1 : data.daily[0],
+        day2 : data.daily[1],
+        day3 : data.daily[2],
+        day4 : data.daily[3],
+        day5 : data.daily[4]
     }
 
     localStorage.setItem( "currentSearchCity", city );
     localStorage.setItem( city + "_weatherData", JSON.stringify( weatherData ) );
 
     addToSearchHistory( city );
-    writeWeather( city );
+    displayWeather( city );
 }
