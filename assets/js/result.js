@@ -1,3 +1,5 @@
+
+
 var cityDateEl = $( '#city' );
 var tempEl = $( '#temperature' );
 var humidityEl = $( '#humidity' );
@@ -76,3 +78,92 @@ function displayWeatherData( event ) {
 
 
 pastSearchesListEl.on( 'click', '.show-data-btn', displayWeatherData );
+
+
+
+
+
+
+//////////////////////////////// From script.js ////////////////////////////////
+
+var cityFormEl = $( '#city-form' );
+var inputEl = $( '#city-name' );
+let latitude;
+let longitude;
+var city;
+
+
+function handleSubmit( event ) {
+    event.preventDefault();
+    city = inputEl.val();
+    getAPI();
+}
+
+
+
+cityFormEl.on('submit', handleSubmit );
+
+// Makes an API call to a service to retrieve the latitude and longitude of a city
+// and then use the latitude and longitude to make another API call to retrieve more 
+// complete data on the weather of a city
+function getAPI( ) {
+    var requestUrl = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&APPID=57c122dd425f67042e057496d307055a";
+    fetch( requestUrl )
+        .then( function ( response ) {
+            return response.json();
+        })
+        .then( function ( data ) {
+            console.log( data );
+            getLatLon( data.city.coord.lat, data.city.coord.lon);
+        })
+        .then( function (  ) {
+            getWeather(  );
+        })
+        .then( )
+}
+
+// Gets the latitude and longitude from the data retured by the API call
+// and stores them into the corresponding global variables
+function getLatLon( lat, lon ) {
+    if( lat && lon ) {
+        latitude = lat;
+        longitude = lon;
+    }
+    console.log( latitude );
+    console.log( longitude );
+}
+
+// Makes an API call using the correct latitude and longitude to retrieve more complete data including UV index
+function getWeather( ) {
+    var requestUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude + "&lon=" + longitude + "&exclude=hourly,daily&appid=57c122dd425f67042e057496d307055a";
+    fetch( requestUrl )
+        .then( function ( response ) {
+            return response.json();
+        })
+        .then( function ( data ) {
+            console.log( data );
+            storeData( data );
+        })
+}
+
+
+
+// Accepts the data returned by the API call in getWeather() and stores it as an object in local storage
+// Calls addToSearchHistory() to add the current search to search history
+// Calls writeWeather() to display weather data of current search
+function storeData( data ) {
+    console.log( city );
+    var weatherData = { 
+        city : city,
+        temperature : data.current.temp,
+        humidity : data.current.humidity,
+        wind_speed : data.current.wind_speed,
+        uv_index : data.current.uvi
+    }
+
+    localStorage.setItem( "currentSearchCity", city );
+    localStorage.setItem( city + "_weatherData", JSON.stringify( weatherData ) );
+
+    addToSearchHistory( city );
+    writeWeather( city );
+}
