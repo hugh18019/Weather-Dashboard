@@ -1,15 +1,21 @@
-var cityDateEl = $( 'city' );
-var tempEl = $( 'temperature' );
-var humidityEl = $( 'humidity' );
-var windSpeedEl = $( 'wind-speed' );
-var uviEl = $( 'uvi' );
+var cityDateEl = $( '#city' );
+var tempEl = $( '#temperature' );
+var humidityEl = $( '#humidity' );
+var windSpeedEl = $( '#wind-speed' );
+var uviEl = $( '#uvi' );
 
-// console.log( moment().tz("America/Los_Angeles").format() );
+
 
 writeWeather();
 
 function writeWeather() {
-    var weatherDataObj = JSON.parse( localStorage.getItem( "weatherData" ) );
-    console.log( weatherDataObj );
+    var key = localStorage.getItem( "currentSearchCity" );
+    var weatherDataObj = JSON.parse( localStorage.getItem( key + "_weatherData" ) );
+    cityDateEl.text( weatherDataObj.city );
 
+    tempEl.append( " " + weatherDataObj.temperature );
+
+    humidityEl.append( " " + weatherDataObj.humidity );
+    windSpeedEl.append( " " + weatherDataObj.wind_speed );
+    uviEl.append( " " + weatherDataObj.uv_index );
 }
