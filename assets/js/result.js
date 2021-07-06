@@ -39,7 +39,10 @@ function displayWeather( key ) {
     
     var weatherDataObj = JSON.parse( localStorage.getItem( key + "_weatherData" ) );
     if( weatherDataObj ) {
-        cityDateEl.text( weatherDataObj.city );
+        // Display city name and date
+        var date = getDate( weatherDataObj.timezone );
+        cityDateEl.text( weatherDataObj.city + " " + date );
+        // Displays the cloud symbol, etc.
         if( weatherDataObj.clouds.includes( 'cloud' ) ){
             var cloudsIcon = $( '<i>' );
             cloudsIcon.addClass( "bi bi-cloud" );
@@ -50,34 +53,53 @@ function displayWeather( key ) {
         windSpeedEl.text( "Wind Speed: " + weatherDataObj.wind_speed );
         uviEl.text( "UV Index: " + weatherDataObj.uv_index );
 
-        display5DayForecast( weatherDataObj );
+        display5DayForecast( weatherDataObj, date );
     }
     
+    // This is for landing on the result page for and first time or when entering a 
+    // new search that is not in the search history
+    // If this is one of the above cases, add the current search to search history
     var pastSearches = JSON.parse( localStorage.getItem( "pastSearches" ) );
     if( pastSearches.length === 0 || !pastSearches.includes( key ) ) {
-
         addToSearchHistory( key );
     } 
 }
 
-
-function display5DayForecast( weatherDataObj ) {
+// date is the current date which would need to be incremented for each of the future dates
+function display5DayForecast( weatherDataObj, date ) {
+    $(day1El).children().eq(0).text( addDays( date, 1 ) );
     $(day1El).children().eq(1).text( "Temp: " + weatherDataObj.day1.temp.day );
     $(day1El).children().eq(2).text( "Humidity: " + weatherDataObj.day1.humidity );
 
+    $(day2El).children().eq(0).text( addDays( date, 2 ) );
     $(day2El).children().eq(1).text( "Temp: " + weatherDataObj.day2.temp.day );
     $(day2El).children().eq(2).text( "Humidity: " + weatherDataObj.day2.humidity );
 
+    $(day3El).children().eq(0).text( addDays( date, 3 ) );
     $(day3El).children().eq(1).text( "Temp: " + weatherDataObj.day3.temp.day );
     $(day3El).children().eq(2).text( "Humidity: " + weatherDataObj.day3.humidity );
 
+    $(day4El).children().eq(0).text( addDays( date, 4 ) );
     $(day4El).children().eq(1).text( "Temp: " + weatherDataObj.day4.temp.day );
     $(day4El).children().eq(2).text( "Humidity: " + weatherDataObj.day4.humidity );
 
+    $(day5El).children().eq(0).text( addDays( date, 5 ) );
     $(day5El).children().eq(1).text( "Temp: " + weatherDataObj.day5.temp.day );
     $(day5El).children().eq(2).text( "Humidity: " + weatherDataObj.day5.humidity );
 }
 
+
+function addDays( date, days ) {
+
+    let options = {
+        year : 'numeric',
+        month : 'numeric',
+        day : 'numeric'
+    };
+    var nd = new Date( date );
+    nd.setDate( nd.getDate() + days );
+    return nd.toLocaleDateString( options );
+}
 
 
 // Add the current search to the array of past searches and stores the array
@@ -113,7 +135,16 @@ function handleHistoryClick( event ) {
 pastSearchesListEl.on( 'click', '.show-data-btn', handleHistoryClick );
 
 
-
+function getDate( timezone ) {
+    let options = {
+        timeZone : timezone,
+        year : 'numeric',
+        month : 'numeric',
+        day : 'numeric'
+    },
+    formatter = new Intl.DateTimeFormat( [], options );
+    return formatter.format( new Date() );
+}
 
 
 
