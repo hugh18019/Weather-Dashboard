@@ -42,6 +42,13 @@ function displayWeather( key ) {
         // Display city name and date
         var date = getDate( weatherDataObj.timezone );
         cityDateEl.text( weatherDataObj.city + " " + date );
+
+        var iconCode = weatherDataObj.icon;
+        var iconEl = $('<img>');
+        iconEl.attr( "src", "http://openweathermap.org/img/wn/" + iconCode + "@2x.png" );
+        cityDateEl.append( iconEl );
+
+
         // Displays the cloud symbol, etc.
         if( weatherDataObj.clouds.includes( 'cloud' ) ){
             var cloudsIcon = $( '<i>' );
@@ -68,24 +75,34 @@ function displayWeather( key ) {
 // date is the current date which would need to be incremented for each of the future dates
 function display5DayForecast( weatherDataObj, date ) {
     $(day1El).children().eq(0).text( addDays( date, 1 ) );
-    $(day1El).children().eq(1).text( "Temp: " + weatherDataObj.day1.temp.day );
-    $(day1El).children().eq(2).text( "Humidity: " + weatherDataObj.day1.humidity );
+    var iconCode1 = weatherDataObj.day1.weather[0].icon;
+    $(day1El).children().eq(1).attr( "src", "http://openweathermap.org/img/wn/" + iconCode1 + "@2x.png");
+    $(day1El).children().eq(2).text( "Temp: " + weatherDataObj.day1.temp.day );
+    $(day1El).children().eq(3).text( "Humidity: " + weatherDataObj.day1.humidity );
 
     $(day2El).children().eq(0).text( addDays( date, 2 ) );
-    $(day2El).children().eq(1).text( "Temp: " + weatherDataObj.day2.temp.day );
-    $(day2El).children().eq(2).text( "Humidity: " + weatherDataObj.day2.humidity );
+    var iconCode2 = weatherDataObj.day2.weather[0].icon;
+    $(day2El).children().eq(1).attr( "src", "http://openweathermap.org/img/wn/" + iconCode2 + "@2x.png");
+    $(day2El).children().eq(2).text( "Temp: " + weatherDataObj.day2.temp.day );
+    $(day2El).children().eq(3).text( "Humidity: " + weatherDataObj.day2.humidity );
 
     $(day3El).children().eq(0).text( addDays( date, 3 ) );
-    $(day3El).children().eq(1).text( "Temp: " + weatherDataObj.day3.temp.day );
-    $(day3El).children().eq(2).text( "Humidity: " + weatherDataObj.day3.humidity );
+    var iconCode3 = weatherDataObj.day3.weather[0].icon;
+    $(day3El).children().eq(1).attr( "src", "http://openweathermap.org/img/wn/" + iconCode3 + "@2x.png");
+    $(day3El).children().eq(2).text( "Temp: " + weatherDataObj.day3.temp.day );
+    $(day3El).children().eq(3).text( "Humidity: " + weatherDataObj.day3.humidity );
 
     $(day4El).children().eq(0).text( addDays( date, 4 ) );
-    $(day4El).children().eq(1).text( "Temp: " + weatherDataObj.day4.temp.day );
-    $(day4El).children().eq(2).text( "Humidity: " + weatherDataObj.day4.humidity );
+    var iconCode4 = weatherDataObj.day4.weather[0].icon;
+    $(day4El).children().eq(1).attr( "src", "http://openweathermap.org/img/wn/" + iconCode4 + "@2x.png");
+    $(day4El).children().eq(2).text( "Temp: " + weatherDataObj.day4.temp.day );
+    $(day4El).children().eq(3).text( "Humidity: " + weatherDataObj.day4.humidity );
 
     $(day5El).children().eq(0).text( addDays( date, 5 ) );
-    $(day5El).children().eq(1).text( "Temp: " + weatherDataObj.day5.temp.day );
-    $(day5El).children().eq(2).text( "Humidity: " + weatherDataObj.day5.humidity );
+    var iconCode5 = weatherDataObj.day5.weather[0].icon;
+    $(day5El).children().eq(1).attr( "src", "http://openweathermap.org/img/wn/" + iconCode5 + "@2x.png");
+    $(day5El).children().eq(2).text( "Temp: " + weatherDataObj.day5.temp.day );
+    $(day5El).children().eq(3).text( "Humidity: " + weatherDataObj.day5.humidity );
 }
 
 
@@ -225,6 +242,7 @@ function storeData( data ) {
         wind_speed : data.current.wind_speed,
         uv_index : data.current.uvi,
         clouds : data.current.weather[0].main,
+        icon : data.current.weather[0].icon,
         day1 : data.daily[0],
         day2 : data.daily[1],
         day3 : data.daily[2],
