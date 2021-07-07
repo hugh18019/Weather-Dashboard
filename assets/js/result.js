@@ -58,8 +58,9 @@ function displayWeather( key ) {
         tempEl.text( "Temperature: " + weatherDataObj.temperature );
         humidityEl.text( "Humidity: " + weatherDataObj.humidity );
         windSpeedEl.text( "Wind Speed: " + weatherDataObj.wind_speed );
-        uviEl.text( "UV Index: " + weatherDataObj.uv_index );
-
+        $('#coloredUVI').text( weatherDataObj.uv_index );
+    
+        colorUviEl( uviEl, weatherDataObj.uv_index );
         display5DayForecast( weatherDataObj, date );
     }
     
@@ -71,6 +72,26 @@ function displayWeather( key ) {
         addToSearchHistory( key );
     } 
 }
+
+// Add color code to the UV index 
+function colorUviEl( uviEl, uvi ) {
+    if( uvi <= 2 ) {
+        $('#coloredUVI').addClass( "bg-success" );
+    }
+    else if( uvi >= 3 && uvi <= 5 ) {
+        $('#coloredUVI').addClass( "bg-warning" );
+    }
+    else if( uvi >= 6 && uvi <= 7 ) {
+        $('#coloredUVI').addClass( "bg-orange" );
+    }
+    else if( uvi >= 8 && uvi <= 10 ) {
+        $('#coloredUVI').addClass( "bg-red" );
+    }
+    else {
+        $('#coloredUVI').addClass( "bg-purple" );
+    }
+}
+
 
 // date is the current date which would need to be incremented for each of the future dates
 function display5DayForecast( weatherDataObj, date ) {
